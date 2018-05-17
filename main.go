@@ -59,7 +59,7 @@ func main() {
 
 func markLocations(limit int, filename, mode string) (*sm.Context, int, error) {
 	ctx := sm.NewContext()
-	ctx.SetSize(1000, 800)
+	ctx.SetSize(600, 400)
 
 	filePath, err := filepath.Abs(filename)
 	if err != nil {
@@ -140,7 +140,7 @@ func getLatLong(latlong string) (float64, float64, error) {
 		return 0, 0, err
 	}
 
-	if y < 95.1125 || y > 112.874722 || x > 5.792222 || x < -9.128333 {
+	if y < 94.972778 || y > 141.019444 || x > 6.075 || x < -11.0075 {
 		return 0, 0, ErrLatLongOutOfRange
 	}
 
