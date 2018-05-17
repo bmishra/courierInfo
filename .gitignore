@@ -1,6 +1,7 @@
 vendor/
 files/
 images/
+courierinfo
 
 ### Go ###
 # Binaries for programs and plugins
