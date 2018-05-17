@@ -49,7 +49,7 @@ func main() {
 
 	baseName := filepath.Base(filename)
 	baseName = strings.TrimSuffix(baseName, filepath.Ext(baseName))
-	outFileName := fmt.Sprintf("images/img-%v-%d-%d.png", baseName, rowCount, time.Now().Unix())
+	outFileName := fmt.Sprintf("images/img-%s-%s-%d-%d.png", baseName, mode, rowCount, time.Now().Unix())
 	if err := gg.SavePNG(outFileName, img); err != nil {
 		terminate(err)
 	}
