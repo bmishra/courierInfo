@@ -22,6 +22,7 @@ import (
 var (
 	ErrLatLong           = errors.New("LatLong is incorrect")
 	ErrLatLongOutOfRange = errors.New("LatLong is out of range")
+	ErrBadInput          = errors.New("Bad input")
 )
 
 func main() {
@@ -63,6 +64,10 @@ func markLocations(limit int, filename, mode string) (*sm.Context, int, error) {
 	filePath, err := filepath.Abs(filename)
 	if err != nil {
 		return ctx, 0, err
+	}
+
+	if stat, e := os.Stat(filePath); e == nil && stat.IsDir() {
+		return ctx, 0, ErrBadInput
 	}
 
 	file, err := os.Open(filePath)
