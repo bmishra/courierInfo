@@ -8,6 +8,7 @@ import (
 	"image/color"
 	"io"
 	"os"
+	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -16,6 +17,16 @@ import (
 	sm "github.com/flopp/go-staticmaps"
 	"github.com/fogleman/gg"
 	"github.com/golang/geo/s2"
+)
+
+// Boundary Points
+const (
+	SouthernmostPoint = 94.972778
+	NorthernmostPoint = 141.019444
+	WesternmostPoint  = 6.075
+	EasternmostPoint  = -11.0075
+
+	ImagesDir = "images"
 )
 
 // Error constants
@@ -49,12 +60,17 @@ func main() {
 
 	baseName := filepath.Base(filename)
 	baseName = strings.TrimSuffix(baseName, filepath.Ext(baseName))
-	outFileName := fmt.Sprintf("images/img-%s-%s-%d-%d.png", baseName, mode, rowCount, time.Now().Unix())
-	if err := gg.SavePNG(outFileName, img); err != nil {
+
+	if _, err := os.Stat(ImagesDir); os.IsNotExist(err) {
+		os.Mkdir(ImagesDir, os.ModePerm)
+	}
+
+	outFilePath := path.Join(ImagesDir, fmt.Sprintf("img-%s-%s-%d-%d.png", baseName, mode, rowCount, time.Now().Unix()))
+	if err := gg.SavePNG(outFilePath, img); err != nil {
 		terminate(err)
 	}
 
-	fmt.Println("Generated: ", outFileName)
+	fmt.Println("\nGenerated: ", outFilePath)
 }
 
 func markLocations(limit int, filename, mode string) (*sm.Context, int, error) {
@@ -140,7 +156,7 @@ func getLatLong(latlong string) (float64, float64, error) {
 		return 0, 0, err
 	}
 
-	if y < 94.972778 || y > 141.019444 || x > 6.075 || x < -11.0075 {
+	if y < SouthernmostPoint || y > NorthernmostPoint || x > WesternmostPoint || x < EasternmostPoint {
 		return 0, 0, ErrLatLongOutOfRange
 	}
 
@@ -149,7 +165,7 @@ func getLatLong(latlong string) (float64, float64, error) {
 
 func terminate(err error) {
 	// ~ won't expand if we use `file=~/some-file`, use ``-file ~/some-file` instead
-	fmt.Println("Usage: go run app.go file <filename> mode plot|line limit 0|N")
+	fmt.Println("\nUsage: go run app.go -file <filename> -mode [plot|line] -limit [0|N]")
 	if err != nil {
 		fmt.Println("Error: ", err.Error())
 	}
